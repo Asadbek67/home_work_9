@@ -1,0 +1,141 @@
+from threading import Thread
+import time
+import requests
+
+# vazifa_1
+# def summa(number):
+#     return sum(int(x) for x in str(number))
+
+# def run_yigindi(number):
+#     start_time = time.time()
+#     result = summa(number)
+#     end_time = time.time()
+#     print(f"{number} sonining raqamlar yig’indisi: {result}, vaqt: {end_time - start_time:.6f} soniya")
+
+# sonlar = [108, 123, 456, 789]
+# threads = []
+# for son in sonlar:
+#     t = Thread(target=run_yigindi, args=(son,))
+#     threads.append(t)
+#     t.start()
+
+# for t in threads:
+#     t.join()
+
+
+# vazifa_2
+# def sekundlardan_vaqtga(sec):
+#     day = sec // 86400
+#     at = (sec % 86400) // 3600
+#     minut = (sec % 3600) // 60
+#     sekond = sec % 60
+#     print(f"{sec} sekund = {day} kun, {at} soat, {minut} minut, {sekond} sekund.")
+
+# sec = 91000
+# t = Thread(target=sekundlardan_vaqtga, args=(sec,))
+# t.start()
+# t.join()
+
+
+# 3_vazifa
+# def big_alpha(names):
+#     result = [name.capitalize() for name in names]
+#     print(result)
+
+# names = ['alfred', 'tabitha', 'william', 'arla']
+# t = Thread(target=big_alpha, args=(names,))
+# t.start()
+# t.join()
+
+
+# vazifa_4
+# def big_number(scores):
+#     result = [score for score in scores if score > 75]
+#     print(result)
+
+# scores = [66, 90, 68, 59, 76, 48
+# ,60, 88, 74, 81, 65]
+# t = Thread(target=big_number, args=(scores,))
+# t.start()
+# t.join()
+
+# vazifa_5
+# def palindrom_words(words):
+#     result = [word for word in words if word.lower() == word.lower()[::-1]]
+#     print(result)
+
+# words = ['Anna', 'Alexey', 'Alla', 'Kazak', 'Dom']
+# t = Thread(target=palindrom_words, args=(words,))
+# t.start()
+# t.join()
+
+
+# vazifa_6
+# def count_alpha(matn):
+#     yangi_matn = ""
+#     start_time = time.time()
+#     for harf in matn:
+#         yangi_matn += '3' if harf == 'e' else harf
+#     end_time = time.time()
+#     print(yangi_matn, f"(vaqt: {end_time - start_time:.6f} soniya)")
+
+# matn = input("Matn kiriting: ")
+# t = Thread(target=count_alpha, args=(matn,))
+# t.start()
+# t.join()
+
+# vazifa_7
+# def not_enter(matn):
+#     yangi_matn = ""
+#     start_time = time.time()
+#     for harf in matn:
+#         if harf != ' ':
+#             yangi_matn += harf
+#     end_time = time.time()
+#     print(yangi_matn, f"(vaqt: {end_time - start_time:.6f} soniya)")
+
+# matn = input("Matn kiriting: ")
+# t = Thread(target=not_enter, args=(matn,))
+# t.start()
+# t.join()
+
+# 8_vazifa
+def ob_havo (shahar, api_key, ob_havo_data):
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={shahar}&appid={api_key}&units=metric"
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  
+        data = response.json()
+        ob_havo_data[shahar] = {
+            "harorat": data["main"]["temp"],
+            "havo": data["weather"][0]["description"],
+            "shahar": data["name"],
+            "davlat": data["sys"]["country"],
+        }
+    except requests.exceptions.RequestException as e:
+        print(f"{shahar} shahridan ob-havo malumotlarini olishda xato: {e}")
+
+def ob_havo2(api_key):
+
+    shaharlar = ["Fargona", "Samarqand", "Buhara", "London", "New York"]
+    ob_havo_data = {}
+    threads = []
+
+    for shahar in shaharlar:
+        t = Thread(target=ob_havo, args=(shahar, api_key, ob_havo_data))
+        threads.append(t)
+        t.start()
+
+    for t in threads:
+        t.join()
+
+    return ob_havo_data
+
+
+api_key = " "  
+
+malumotlar= ob_havo2(api_key)
+
+
+for shahar, info in malumotlar.items():
+    print(f"{info['shahar']}, {info['davlat']}: {info['harorat']}°C, Havo: {info['havo']}")
